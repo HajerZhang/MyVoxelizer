@@ -171,6 +171,7 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
         MyGrid1d = (stlmesh->triangleList.size() + MyBlock1d - 1) / MyBlock1d;
         ComfirmSurfaceVoxelsKernel<<<MyGrid1d, MyBlock3d>>>(d_triangleList, stlmesh->triangleList.size(), d_grid);
 
+        cudaFree(d_triangleList);
     #endif
 }
 
