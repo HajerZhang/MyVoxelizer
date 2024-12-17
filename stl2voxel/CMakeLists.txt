@@ -1,7 +1,14 @@
-﻿add_library(
+﻿set(CMAKE_CXX_STANDARD 17)
+# Set multple architectures here to allow device under different architectures to automatically detect the best one and run the optimal version
+# But this will increase the compile time and binary size
+set(CMAKE_CUDA_ARCHITECTURES 75;86) 
+# If you want to separate the declaration first and then define the function in another file, you need to turn on this option
+set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
+
+add_library(
     voxelizer 
-    Voxelizer.cpp
-    VoxelGrid.cpp
+    Voxelizer.cu
+    VoxelGrid.cu
 )
 
 set(EIGEN_DIR /usr/include/eigen3)

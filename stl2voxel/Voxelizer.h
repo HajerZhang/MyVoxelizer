@@ -120,7 +120,6 @@ namespace voxel{
         void ComfirmSurfaceVoxels(const STLMesh *stlmesh);
         void ComfirmInsideVoxels(const STLMesh *stlmesh);
         void ClearFreeBodyVoxels();
-        
     };
 
     class Voxelizer

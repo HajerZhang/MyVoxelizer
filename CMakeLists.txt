@@ -1,6 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.20)
 
-project(Voxelizer)
+project(Voxelizer
+    LANGUAGES CXX CUDA
+)
 
 add_subdirectory(stl2voxel)
 
