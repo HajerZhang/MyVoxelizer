@@ -60,6 +60,7 @@ VoxelGrid::VoxelGrid(
     m_minGrid = Vector3d(stlmesh->triangleList[0].v0.x, stlmesh->triangleList[0].v0.y, stlmesh->triangleList[0].v0.z);
     m_maxGrid = Vector3d(stlmesh->triangleList[0].v0.x, stlmesh->triangleList[0].v0.y, stlmesh->triangleList[0].v0.z);
 
+    # pragma omp parallel
     for(auto triangle : stlmesh->triangleList)
     {
         if(triangle.v0.x < m_minGrid.x) m_minGrid.x = triangle.v0.x;
