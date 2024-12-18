@@ -1,4 +1,4 @@
-﻿#include <Voxelizer.h>
+﻿#include <Voxelizer.cuh>
 
 #include <iostream>
 

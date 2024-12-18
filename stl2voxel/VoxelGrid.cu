@@ -25,7 +25,7 @@
 //              citations are welcome.  
 //////////////////////////////////////////////////////////////////////////////////////
 
-#include <Voxelizer.h>
+#include <Voxelizer.cuh>
 #include <cmath>
 using namespace voxel;
 
@@ -175,7 +175,7 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
     #endif
 }
 
-void VoxelGrid::ComfirmInsideVoxels(const STLMesh *stlmesh)
+void VoxelGrid::ComfirmInsideVoxels()
 {   
     #ifndef _USING_CUDA_
         # pragma omp parallel for
@@ -237,6 +237,7 @@ void VoxelGrid::ComfirmInsideVoxels(const STLMesh *stlmesh)
             }
         }
     #else
+        ComfirmInsideVoxelsKernel<<<MyGrid3d, MyBlock3d>>>(d_grid);
 
     #endif
 }
@@ -269,7 +270,7 @@ void VoxelGrid::Update(const STLMesh *stlmesh)
         InitDevice(m_numX, m_numY, m_numZ, m_minGrid, m_voxelSize);
     #endif
     ComfirmSurfaceVoxels(stlmesh);
-    ComfirmInsideVoxels(stlmesh);
+    ComfirmInsideVoxels();
     #ifdef _USING_CUDA_
         cudaDeviceSynchronize();
         cudaMemcpy(m_grid.data(), d_grid, m_numX * m_numY * m_numZ * sizeof(int), cudaMemcpyDeviceToHost);

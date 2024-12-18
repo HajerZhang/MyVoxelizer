@@ -40,7 +40,6 @@ namespace voxel{
         double x, y, z;
         Vector3d(double x, double y, double z) : x(x), y(y), z(z) {}
         Vector3d() : x(0), y(0), z(0) {}
-        ~Vector3d() {}
         int operator[](int i) const {
             if(i == 0) return x;
             if(i == 1) return y;
@@ -56,7 +55,6 @@ namespace voxel{
         Vector3d v0;
         Vector3d v1;
         Vector3d v2;
-        ~Triangle() {}
         Vector3d min() const {
             Vector3d min = v0;
             min.x = std::min(v0.x, std::min(v1.x, v2.x));
@@ -118,7 +116,7 @@ namespace voxel{
         void MarkSurfaceVoxels(const Vector3d &voxelCoord);
         void MarkInsideVoxels(const Vector3d &voxelCoord);
         void ComfirmSurfaceVoxels(const STLMesh *stlmesh);
-        void ComfirmInsideVoxels(const STLMesh *stlmesh);
+        void ComfirmInsideVoxels();
         void ClearFreeBodyVoxels();
     };
 

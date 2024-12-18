@@ -25,7 +25,7 @@
 //              citations are welcome.  
 //////////////////////////////////////////////////////////////////////////////////////
 
-#include <Voxelizer.h>
+#include <Voxelizer.cuh>
 #include <omp.h>
 using namespace voxel;
 
