@@ -118,7 +118,7 @@ namespace voxel{
         void MarkSurfaceVoxels(const Vector3d &voxelCoord);
         void MarkInsideVoxels(const Vector3d &voxelCoord);
         void ComfirmSurfaceVoxels(const STLMesh *stlmesh);
-        void ComfirmInsideVoxels(const STLMesh *stlmesh);
+        void ComfirmInsideVoxels();
         void ClearFreeBodyVoxels();
         
     };

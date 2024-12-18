@@ -154,7 +154,7 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
     }
 }
 
-void VoxelGrid::ComfirmInsideVoxels(const STLMesh *stlmesh)
+void VoxelGrid::ComfirmInsideVoxels()
 {   
     # pragma omp parallel for
     for(int z = 0; z < m_numZ; z++){
@@ -219,7 +219,7 @@ void VoxelGrid::ComfirmInsideVoxels(const STLMesh *stlmesh)
 void VoxelGrid::Update(const STLMesh *stlmesh)
 {
     ComfirmSurfaceVoxels(stlmesh);
-    ComfirmInsideVoxels(stlmesh);
+    ComfirmInsideVoxels();
 }
 
 void VoxelGrid::OutputVTKFile(const std::string &outputfile){
