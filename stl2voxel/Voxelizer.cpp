@@ -27,11 +27,17 @@
 
 #include <Voxelizer.h>
 #include <omp.h>
+#include <chrono>
+
 using namespace voxel;
+
+#ifndef OMP_THREADS
+    #define OMP_THREADS 16
+#endif
 
 Voxelizer::Voxelizer()
 {
-    omp_set_num_threads(16);
+    omp_set_num_threads(OMP_THREADS);
     m_stlmesh = new STLMesh();
 }
 
@@ -138,7 +144,10 @@ void Voxelizer::WriteVTKFile(const std::string &outputfile)
 void Voxelizer::Voxelization(const int numX, const int numY, const int numZ)
 {
     m_voxelgrid = new VoxelGrid(m_stlmesh, numX, numY, numZ);
+    auto start = std::chrono::high_resolution_clock::now();
     m_voxelgrid->Update(m_stlmesh);
+    auto end = std::chrono::high_resolution_clock::now();
+    std::cout << "Voxelization Cost: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 }
 
 void Voxelizer::OutputVoxelModel(

@@ -113,6 +113,7 @@ bool aabbCheck(const Vector3d &minTri, const Vector3d &maxTri, const Vector3d &m
 
 void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
 {   
+    int numSurfaceVoxels = 0;
     # pragma omp parallel for
     for(const auto& triangle : stlmesh->triangleList)
     {   
@@ -146,16 +147,22 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
                     if(aabbCheck(minTri, maxTri, minVoxel, maxVoxel))
                     {
                         MarkSurfaceVoxels(Vector3d(x, y, z));
+                        # pragma omp atomic
+                        numSurfaceVoxels++;
+                        std::cout << numSurfaceVoxels << " Surface Voxels have been marked" << std::endl;
                     }
 
                 }
             }
         }
     }
+
+    m_numSurfaceVoxels = numSurfaceVoxels;
 }
 
 void VoxelGrid::ComfirmInsideVoxels()
 {   
+    int numInsideVoxels = 0;
     # pragma omp parallel for
     for(int z = 0; z < m_numZ; z++){
         for(int y = 0; y < m_numY; y++){
@@ -210,16 +217,29 @@ void VoxelGrid::ComfirmInsideVoxels()
 
                 bool inside = surfaceCount == 6 ? true : false;
 
-                if(inside) MarkInsideVoxels(voxelCoord);
+                if(inside) {
+                    MarkInsideVoxels(voxelCoord);
+                    # pragma omp atomic
+                    numInsideVoxels++;
+                    std::cout << numInsideVoxels << " Inside Voxels have been marked" << std::endl;
+                }
+                
             }
         }
     }
+
+    m_numInsideVoxels = numInsideVoxels;
 }
 
 void VoxelGrid::Update(const STLMesh *stlmesh)
 {
     ComfirmSurfaceVoxels(stlmesh);
     ComfirmInsideVoxels();
+    std::cout << "Voxelization has been finished" << std::endl;
+    std::cout << "Finally found:" << std::endl;
+    std::cout << m_numSurfaceVoxels << " Surface Voxels" << std::endl;
+    std::cout << m_numInsideVoxels << " Inside Voxels" << std::endl;
+    std::cout << "in total " << m_numVoxels << " Voxels" << std::endl;
 }
 
 void VoxelGrid::OutputVTKFile(const std::string &outputfile){

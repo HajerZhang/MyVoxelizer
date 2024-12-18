@@ -113,6 +113,8 @@ namespace voxel{
         int m_numX, m_numY, m_numZ;
         Vector3d m_minGrid, m_maxGrid;
         Vector3d m_voxelSize;
+        int m_numSurfaceVoxels = 0;
+        int m_numInsideVoxels = 0;
         std::vector<int> m_grid;
         // -1: empty, 0: surface, 1: inside
         void MarkSurfaceVoxels(const Vector3d &voxelCoord);
