@@ -22,7 +22,7 @@ Then, you can run the program with the following command:
 The model before voxelization(.stl):
 ![image](./doc/stl.png)
 The model after voxelization(.vtk):
-![image](./doc/128.png)
+![image](./doc/256.png)
 
 ## Authors
 * Hajer Zhang, IDEAS, DLUT, China
