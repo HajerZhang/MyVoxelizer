@@ -26,6 +26,10 @@ int main(int argc, char** argv)
         std::cout << "Enter the Operation: ";
         std::cin >> operation;
 
+        int numX, numY, numZ;
+        std::cout << "Please Enter the Number of Voxels in X, Y, Z: ";
+        std::cin >> numX >> numY >> numZ;
+
         auto appendSuffix = [](const std::string& suffix) {
             std::cout << "Please Enter the Output File Name: ";
             std::string filename;
@@ -33,8 +37,6 @@ int main(int argc, char** argv)
             filename += ".vtk";
             return filename;
         };
-
-        int numX, numY, numZ;
 
         std::string outputfile;
         switch (operation)
@@ -45,14 +47,9 @@ int main(int argc, char** argv)
             break;
         case 2:
             outputfile = appendSuffix(".vtk");
-            std::cout << "Please Enter the Number of Voxels in X, Y, Z: ";
-            std::cin >> numX >> numY >> numZ;
             voxelizer->OutputVoxelModel(outputfile, numX, numY, numZ);
             break;
         case 3:
-            outputfile = appendSuffix(".txt");
-            std::cout << "Please Enter the Number of Voxels in X, Y, Z: ";
-            std::cin >> numX >> numY >> numZ;
             // voxelizer->WriteVoxelInformation("voxel.txt");
             break;
         case 0:

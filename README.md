@@ -14,7 +14,7 @@ cmake --build build
 ```
 Then, you can run the program with the following command:
 ```
-./main <stl file>
+./main ./model/sofa.stl
 ```
 
 ## Results
