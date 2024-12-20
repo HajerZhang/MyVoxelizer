@@ -48,6 +48,29 @@ namespace voxel{
             throw std::runtime_error("Index out of range");
             exit(1);
         }
+        Vector3d operator-(const Vector3d& other) const {
+            return Vector3d(x - other.x, y - other.y, z - other.z);
+        }
+
+        Vector3d operator+(const Vector3d& other) const {
+            return Vector3d(x + other.x, y + other.y, z + other.z);
+        }
+
+        Vector3d operator*(float scalar) const {
+            return Vector3d(x * scalar, y * scalar, z * scalar);
+        }
+
+        float dot(const Vector3d& other) const {
+            return x * other.x + y * other.y + z * other.z;
+        }
+
+        Vector3d cross(const Vector3d& other) const {
+            return Vector3d(
+                y * other.z - z * other.y,
+                z * other.x - x * other.z,
+                x * other.y - y * other.x
+            );
+        }
     };
 
     struct Triangle

@@ -111,6 +111,68 @@ bool aabbCheck(const Vector3d &minTri, const Vector3d &maxTri, const Vector3d &m
     return true;
 }
 
+bool rayIntersectsTriangle(const Vector3d& orig, const Vector3d& dir,
+                            const Vector3d& v0, const Vector3d& v1, const Vector3d& v2,
+                            float& t) {
+    Vector3d e1 = v1 - v0;
+    Vector3d e2 = v2 - v0;
+    Vector3d h = dir.cross(e2);
+    double a = e1.dot(h);
+
+    if (a > -1e-5 && a < 1e-5) return false;
+
+    double f = 1.0f / a;
+    Vector3d s = orig - v0;
+    double u = f * s.dot(h);
+    if (u < 0.0f || u > 1.0f) return false;
+
+    Vector3d q = s.cross(e1);
+    double v = f * dir.dot(q);
+    if (v < 0.0f || u + v > 1.0f) return false;
+
+    t = f * e2.dot(q);
+    return t > 1e-5;
+}
+
+bool voxelIntersectsTriangle(const Vector3d& voxelMin, const Vector3d& voxelMax,
+                              const Vector3d& v0, const Vector3d& v1, const Vector3d& v2) {
+    Vector3d min = voxelMin;
+    Vector3d max = voxelMax;
+
+    Vector3d normal(1, 0, 0);
+    Vector3d orig(min.x, (min.y + max.y) / 2.0f, (min.z + max.z) / 2.0f);
+    Vector3d dir(-1, 0, 0);
+    float t;
+    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+
+    normal = Vector3d(-1, 0, 0);
+    orig = Vector3d(max.x, (min.y + max.y) / 2.0f, (min.z + max.z) / 2.0f);
+    dir = Vector3d(1, 0, 0);
+    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+
+    normal = Vector3d(0, 1, 0);
+    orig = Vector3d((min.x + max.x) / 2.0f, min.y, (min.z + max.z) / 2.0f);
+    dir = Vector3d(0, -1, 0);
+    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+
+    normal = Vector3d(0, -1, 0);
+    orig = Vector3d((min.x + max.x) / 2.0f, max.y, (min.z + max.z) / 2.0f);
+    dir = Vector3d(0, 1, 0);
+    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+
+    normal = Vector3d(0, 0, 1);
+    orig = Vector3d((min.x + max.x) / 2.0f, (min.y + max.y) / 2.0f, min.z);
+    dir = Vector3d(0, 0, -1);
+    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+
+    normal = Vector3d(0, 0, -1);
+    orig = Vector3d((min.x + max.x) / 2.0f, (min.y + max.y) / 2.0f, max.z);
+    dir = Vector3d(0, 0, 1);
+    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+
+    return false;
+}
+
 void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
 {   
     int numSurfaceVoxels = 0;
@@ -144,7 +206,16 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
                         m_minGrid.z + (z + 1) * m_voxelSize.z
                     );
 
-                    if(aabbCheck(minTri, maxTri, minVoxel, maxVoxel))
+
+
+                    if(
+                        #define LOWPRE
+                        #ifdef LOWPRE
+                            aabbCheck(minTri, maxTri, minVoxel, maxVoxel)
+                        #else
+                            voxelIntersectsTriangle(minVoxel, maxVoxel, triangle.v0, triangle.v1, triangle.v2)
+                        #endif
+                    )
                     {
                         MarkSurfaceVoxels(Vector3d(x, y, z));
                         # pragma omp atomic

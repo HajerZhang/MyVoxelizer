@@ -195,4 +195,31 @@ void Voxelizer::OutputSTLInformation()
     std::cout << "X Range: " << minGrid.x << " - " << maxGrid.x << std::endl;
     std::cout << "Y Range: " << minGrid.y << " - " << maxGrid.y << std::endl;
     std::cout << "Z Range: " << minGrid.z << " - " << maxGrid.z << std::endl;
+
+    double lengthX = maxGrid.x - minGrid.x;
+    double lengthY = maxGrid.y - minGrid.y;
+    double lengthZ = maxGrid.z - minGrid.z;
+
+    int minDirect = (std::abs(lengthX) < std::abs(lengthY)) ? 
+        ((std::abs(lengthX) < std::abs(lengthZ)) ? 0 : 2) : 
+        ((std::abs(lengthY) < std::abs(lengthZ)) ? 1 : 2);
+    
+    double rateX, rateY, rateZ;
+    if(minDirect == 0)
+    {
+        rateX = 1;
+        rateY = (maxGrid.y - minGrid.y) / (maxGrid.x - minGrid.x);
+        rateZ = (maxGrid.z - minGrid.z) / (maxGrid.x - minGrid.x);
+    }else if (minDirect == 1)
+    {
+        rateX = (maxGrid.x - minGrid.x) / (maxGrid.y - minGrid.y);
+        rateY = 1;
+        rateZ = (maxGrid.z - minGrid.z) / (maxGrid.y - minGrid.y);
+    }else{
+        rateX = (maxGrid.x - minGrid.x) / (maxGrid.z - minGrid.z);
+        rateY = (maxGrid.y - minGrid.y) / (maxGrid.z - minGrid.z);
+        rateZ = 1;
+    }
+
+    std::cout << "X : Y : Z = " << rateX << " : " << rateY << " : " << rateZ << std::endl;
 }

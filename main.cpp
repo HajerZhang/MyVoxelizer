@@ -15,6 +15,10 @@ int main(int argc, char** argv)
     voxelizer->ReadSTLFile(argv[1]);
     voxelizer->OutputSTLInformation();
 
+    int numX, numY, numZ;
+    std::cout << "Please Enter the Number of Voxels in X, Y, Z: ";
+    std::cin >> numX >> numY >> numZ;
+
     while(true){
         std::cout << "Please Choose the Operation: " << std::endl;
         std::cout << "1. Write VTK File" << std::endl;
@@ -26,9 +30,7 @@ int main(int argc, char** argv)
         std::cout << "Enter the Operation: ";
         std::cin >> operation;
 
-        int numX, numY, numZ;
-        std::cout << "Please Enter the Number of Voxels in X, Y, Z: ";
-        std::cin >> numX >> numY >> numZ;
+
 
         auto appendSuffix = [](const std::string& suffix) {
             std::cout << "Please Enter the Output File Name: ";
