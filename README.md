@@ -29,3 +29,6 @@ The model after voxelization(.vtk):
 * Email: zbaili966@gmail.com
 * Date: 2024.12.18
 
+## Update
+* 2024.12.23：Add a [Viewer](./Viewer.py) based on the VTK, pyvista, pyvistaqt, and PyQt5. But the viewer is not stable now.
+
