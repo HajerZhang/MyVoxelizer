@@ -23,7 +23,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Voxel Viewer")
-        self.setGeometry(100, 100, 1000, 800)
+        self.setGeometry(100, 100, 1000, 600)
 
         # Menu Bar
         self.create_menu_bar()
