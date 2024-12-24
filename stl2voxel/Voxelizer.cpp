@@ -164,7 +164,18 @@ void Voxelizer::OutputVoxelModel(
 
     m_voxelgrid->OutputVTKFile(outputfile);
 
-    std::cout << "Already Output Voxel Model to " << outputfile << std::endl;
+    std::cout << "Already Output Voxel Model to " << outputfile << " Which can be checked by Paraview" << std::endl;
+}
+
+void Voxelizer::GetVoxelGridSet(const std::string &outputfile)
+{
+    if(m_voxelgrid == NULL) Voxelization(100, 100, 100);
+
+    m_voxelgrid->TwoPoint2GetSet();
+
+    m_voxelgrid->OutputPostVTKFile(outputfile);
+
+    std::cout << "Finish getting voxel grid set, and output to " << outputfile << std::endl;
 }
 
 
@@ -222,4 +233,11 @@ void Voxelizer::OutputSTLInformation()
     }
 
     std::cout << "X : Y : Z = " << rateX << " : " << rateY << " : " << rateZ << std::endl;
+}
+
+void Voxelizer::WriteVoxelFile(const std::string& filename)
+{
+    m_voxelgrid->OutputXMLFile(filename);
+
+    std::cout << "Finish writing voxel file to " << filename << std::endl;
 }

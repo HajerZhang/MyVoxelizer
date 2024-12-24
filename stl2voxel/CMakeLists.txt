@@ -10,6 +10,13 @@ target_include_directories(
     PUBLIC 
     .
     ${EIGEN_DIR}
+    ${CMAKE_SOURCE_DIR}/tinyxml
+)
+
+target_link_libraries(
+    voxelizer 
+    PUBLIC 
+    tinyxml2
 )
 
 find_package(OpenMP REQUIRED)

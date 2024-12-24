@@ -2,8 +2,8 @@
 
 project(Voxelizer)
 
+add_subdirectory(tinyxml)
 add_subdirectory(stl2voxel)
-
 add_executable(main main.cpp)
 
 target_link_libraries(main PUBLIC voxelizer)

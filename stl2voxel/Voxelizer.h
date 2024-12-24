@@ -33,6 +33,7 @@
 #include <cstdint>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 namespace voxel{
     struct Vector3d
@@ -123,6 +124,32 @@ namespace voxel{
         }
     };
 
+    typedef enum{
+        CELL_SET = 0,
+        POINT_SET = 1
+    } SetType;
+
+    struct Set
+    {
+        SetType type;
+        std::vector<int> index;
+        ~Set() {
+            index.clear();
+            index.shrink_to_fit();
+        }
+    };
+
+    typedef enum{
+        SURFACE_IN = -1,
+        SURFACE_OUT = 1,
+        PENETRATE = 0
+    } ChooseType;
+
+    typedef enum{
+        ADD = 1,
+        SUB = -1,
+    } InteractType;
+
     class VoxelGrid
     {
     public:
@@ -131,6 +158,9 @@ namespace voxel{
         VoxelGrid(const STLMesh *stlmesh, const int numX, const int numY, const int numZ);
         void Update(const STLMesh *stlmesh);
         void OutputVTKFile(const std::string &outputfile);
+        void OutputPostVTKFile(const std::string &outputfile);
+        void TwoPoint2GetSet();
+        void OutputXMLFile(const std::string &outputfile);
     private:
         int m_numVoxels;
         int m_numX, m_numY, m_numZ;
@@ -140,13 +170,25 @@ namespace voxel{
         int m_numInsideVoxels = 0;
         std::vector<int> m_grid;
         // -1: empty, 0: surface, 1: inside
+        std::vector<Set> m_setList;
         void MarkSurfaceVoxels(const Vector3d &voxelCoord);
         void MarkInsideVoxels(const Vector3d &voxelCoord);
         void ComfirmSurfaceVoxels(const STLMesh *stlmesh);
         void ComfirmInsideVoxels();
         void ClearFreeBodyVoxels();
-        
+        void GetCellSet
+        (   
+            const Vector3d &onePoint, const Vector3d &twoPoint, 
+            const InteractType &interactType, std::vector<int> &index
+        );
+        void GetPointSet
+        (   
+            const Vector3d &onePoint, const Vector3d &twoPoint, 
+            const ChooseType chooseType,const InteractType &interactType, 
+            std::vector<int> &index
+        );
     };
+
 
     class Voxelizer
     {
@@ -156,6 +198,7 @@ namespace voxel{
         void ReadSTLFile(const std::string& filename);
         void WriteVTKFile(const std::string& filename);
         void OutputVoxelModel(const std::string& filename, const int numX, const int numY, const int numZ);
+        void GetVoxelGridSet(const std::string &outputfile);
         void WriteVoxelFile(const std::string& filename);
         void OutputSTLInformation();
     private:
@@ -164,7 +207,6 @@ namespace voxel{
         VoxelGrid *m_voxelgrid;
         void LoadVTKMesh();
         void Voxelization(const int numX, const int numY, const int numZ);
-
     };
 }
 
