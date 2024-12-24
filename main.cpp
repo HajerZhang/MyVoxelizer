@@ -18,6 +18,7 @@ void stlProcess(Voxelizer *voxelizer, const std::string& filename)
         std::cout << "1. Write VTK File" << std::endl;
         std::cout << "2. Output Voxel Model" << std::endl;
         std::cout << "3. Get VoxelGrid Set" << std::endl;
+        std::cout << "4. Write Voxel File" << std::endl;
         std::cout << "0. Exit" << std::endl;
 
         int operation;
