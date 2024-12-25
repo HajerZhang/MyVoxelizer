@@ -33,6 +33,10 @@ Then, you can run the program with the following command:
 
 ## Update
 * 2024.12.23：Add a [Viewer](./Viewer.py) based on the VTK, pyvista, pyvistaqt, and PyQt5. But the viewer is not stable now.
+<div style="display: flex; justify-content: center; margin: auto; width: 80%;">
+    <img src="./doc/gui.png" alt="Image 1" style="width: 96%;">
+</div>
+
 * 2024.12.25：Update the new algorithm for voxelization, and the new algorithm is more efficient than the previous one.
 <div style="display: flex; justify-content: space-between;">
     <img src="./doc/before.png" alt="Image 1" style="width: 48%;">
