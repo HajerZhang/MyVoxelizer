@@ -60,6 +60,10 @@ namespace voxel{
         Vector3d operator*(float scalar) const {
             return Vector3d(x * scalar, y * scalar, z * scalar);
         }
+        
+        Vector3d operator/(float scalar) const {
+            return Vector3d(x / scalar, y / scalar, z / scalar);
+        }
 
         float dot(const Vector3d& other) const {
             return x * other.x + y * other.y + z * other.z;

@@ -115,66 +115,144 @@ bool aabbCheck(const Vector3d &minTri, const Vector3d &maxTri, const Vector3d &m
     return true;
 }
 
-bool rayIntersectsTriangle(const Vector3d& orig, const Vector3d& dir,
-                            const Vector3d& v0, const Vector3d& v1, const Vector3d& v2,
-                            float& t) {
-    Vector3d e1 = v1 - v0;
-    Vector3d e2 = v2 - v0;
-    Vector3d h = dir.cross(e2);
-    double a = e1.dot(h);
+bool isSegmentIntersectTriangle(const Vector3d& p1, const Vector3d& p2, const Triangle& triangle)
+{
+    Vector3d edge1 = triangle.v1 - triangle.v0;
+    Vector3d edge2 = triangle.v2 - triangle.v0;
+    Vector3d dir = p2 - p1;
+    Vector3d h = dir.cross(edge2);
 
-    if (a > -1e-5 && a < 1e-5) return false;
+    double a = edge1.dot(h);
+    if (std::abs(a) < 1e-6)
+        return false;
 
-    double f = 1.0f / a;
-    Vector3d s = orig - v0;
+    double f = 1.0 / a;
+    Vector3d s = p1 - triangle.v0;
     double u = f * s.dot(h);
-    if (u < 0.0f || u > 1.0f) return false;
+    if (u < 0.0 || u > 1.0)
+        return false;
 
-    Vector3d q = s.cross(e1);
+    Vector3d q = s.cross(edge1);
     double v = f * dir.dot(q);
-    if (v < 0.0f || u + v > 1.0f) return false;
+    if (v < 0.0 || u + v > 1.0)
+        return false;
 
-    t = f * e2.dot(q);
-    return t > 1e-5;
+    double t = f * edge2.dot(q);
+    return t >= 0.0 && t <= 1.0;
 }
 
 bool voxelIntersectsTriangle(const Vector3d& voxelMin, const Vector3d& voxelMax,
-                              const Vector3d& v0, const Vector3d& v1, const Vector3d& v2) {
-    Vector3d min = voxelMin;
-    Vector3d max = voxelMax;
+                              const Triangle& triangle) {
+    Vector3d vertices[8] = {
+        Vector3d(voxelMin.x, voxelMin.y, voxelMin.z),
+        Vector3d(voxelMax.x, voxelMin.y, voxelMin.z),
+        Vector3d(voxelMin.x, voxelMax.y, voxelMin.z),
+        Vector3d(voxelMax.x, voxelMax.y, voxelMin.z),
+        Vector3d(voxelMin.x, voxelMin.y, voxelMax.z),
+        Vector3d(voxelMax.x, voxelMin.y, voxelMax.z),
+        Vector3d(voxelMin.x, voxelMax.y, voxelMax.z),
+        Vector3d(voxelMax.x, voxelMax.y, voxelMax.z)
+    };
 
-    Vector3d normal(1, 0, 0);
-    Vector3d orig(min.x, (min.y + max.y) / 2.0f, (min.z + max.z) / 2.0f);
-    Vector3d dir(-1, 0, 0);
-    float t;
-    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+    int edges[12][2] = {
+        {0, 1}, {1, 3}, {3, 2}, {2, 0}, 
+        {4, 5}, {5, 7}, {7, 6}, {6, 4}, 
+        {0, 4}, {1, 5}, {2, 6}, {3, 7}  
+    };
 
-    normal = Vector3d(-1, 0, 0);
-    orig = Vector3d(max.x, (min.y + max.y) / 2.0f, (min.z + max.z) / 2.0f);
-    dir = Vector3d(1, 0, 0);
-    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
-
-    normal = Vector3d(0, 1, 0);
-    orig = Vector3d((min.x + max.x) / 2.0f, min.y, (min.z + max.z) / 2.0f);
-    dir = Vector3d(0, -1, 0);
-    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
-
-    normal = Vector3d(0, -1, 0);
-    orig = Vector3d((min.x + max.x) / 2.0f, max.y, (min.z + max.z) / 2.0f);
-    dir = Vector3d(0, 1, 0);
-    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
-
-    normal = Vector3d(0, 0, 1);
-    orig = Vector3d((min.x + max.x) / 2.0f, (min.y + max.y) / 2.0f, min.z);
-    dir = Vector3d(0, 0, -1);
-    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
-
-    normal = Vector3d(0, 0, -1);
-    orig = Vector3d((min.x + max.x) / 2.0f, (min.y + max.y) / 2.0f, max.z);
-    dir = Vector3d(0, 0, 1);
-    if (rayIntersectsTriangle(orig, dir, v0, v1, v2, t)) return true;
+    for (int i = 0; i < 12; i++) {
+        Vector3d p1 = vertices[edges[i][0]];
+        Vector3d p2 = vertices[edges[i][1]];
+        if (isSegmentIntersectTriangle(p1, p2, triangle)) {
+            return true;
+        }
+    }
 
     return false;
+}
+
+bool isPointInTriangle(const Vector3d& point, const Vector3d& v0, const Vector3d& v1, const Vector3d& v2)
+{
+    Vector3d v0v1 = v1 - v0;
+    Vector3d v0v2 = v2 - v0;
+    Vector3d vp = point - v0;
+
+    double dot00 = v0v1.dot(v0v1);
+    double dot01 = v0v1.dot(v0v2);
+    double dot02 = v0v1.dot(vp);
+    double dot11 = v0v2.dot(v0v2);
+    double dot12 = v0v2.dot(vp);
+
+    double inverDeno = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    double u = (dot11 * dot02 - dot01 * dot12) * inverDeno;
+    if (u < 0 || u > 1) // if u out of range, return directly
+    {
+        return false;
+    }
+
+    double v = (dot00 * dot12 - dot01 * dot02) * inverDeno;
+    if (v < 0 || v > 1) // if v out of range, return directly
+    {
+        return false;
+    }
+
+    return u + v <= 1;
+}
+
+double Point2TriangleDistance(const Vector3d& point, const Triangle& triangle, Vector3d &keyPoint)
+{
+    Vector3d v0 = point - triangle.v0;
+    Vector3d normal = triangle.normal;
+    double lenghNormal = sqrt(normal.dot(normal));
+    normal = triangle.normal/lenghNormal;
+    double distance2Plane = v0.dot(normal);
+
+    Vector3d proj = point -  normal * distance2Plane;
+    if(isPointInTriangle(proj, triangle.v0, triangle.v1, triangle.v2))
+    {   
+        keyPoint = proj;
+        return distance2Plane;
+    }else{
+        Vector3d edge10 = triangle.v1 - triangle.v0;
+        Vector3d edge20 = triangle.v2 - triangle.v0;
+        Vector3d edge21 = triangle.v2 - triangle.v1;
+
+        double length10 = sqrt(edge10.dot(edge10));
+        double length20 = sqrt(edge20.dot(edge20));
+        double length21 = sqrt(edge21.dot(edge21));
+
+        Vector3d edge10Point = triangle.v0 + edge10 * (proj - triangle.v0).dot(edge10) / length10;
+        Vector3d edge20Point = triangle.v0 + edge20 * (proj - triangle.v0).dot(edge20) / length20;
+        Vector3d edge21Point = triangle.v1 + edge21 * (proj - triangle.v1).dot(edge21) / length21;
+
+        double distance10 = (proj - edge10Point).dot(proj - edge10Point);
+        double distance20 = (proj - edge20Point).dot(proj - edge20Point);
+        double distance21 = (proj - edge21Point).dot(proj - edge21Point);
+
+        keyPoint = distance10 < distance20 ? (distance10 < distance21 ? edge10Point : edge21Point) : (distance20 < distance21 ? edge20Point : edge21Point);
+        return sqrt(std::min(distance10, std::min(distance20, distance21)) + distance2Plane * distance2Plane);    
+    }
+}
+
+
+bool distanceCheck(Vector3d& minVoxel, const Vector3d& maxVoxel, const Triangle& triangle)
+{
+    Vector3d centerVoxel = Vector3d(
+        (minVoxel.x + maxVoxel.x) / 2.0,
+        (minVoxel.y + maxVoxel.y) / 2.0,
+        (minVoxel.z + maxVoxel.z) / 2.0
+    );
+    double voxelLength = 0.5 * sqrt(
+        (maxVoxel.x - minVoxel.x) * (maxVoxel.x - minVoxel.x) +
+        (maxVoxel.y - minVoxel.y) * (maxVoxel.y - minVoxel.y) +
+        (maxVoxel.z - minVoxel.z) * (maxVoxel.z - minVoxel.z)
+    );
+
+    Vector3d keyPoint;
+    double distance = Point2TriangleDistance(centerVoxel, triangle, keyPoint);
+
+    return distance < voxelLength;
 }
 
 void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
@@ -213,11 +291,17 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
 
 
                     if(
-                        #define LOWPRE
-                        #ifdef LOWPRE
+                        // #define AABB
+                        #ifdef AABB
                             aabbCheck(minTri, maxTri, minVoxel, maxVoxel)
-                        #else
-                            voxelIntersectsTriangle(minVoxel, maxVoxel, triangle.v0, triangle.v1, triangle.v2)
+                        #endif
+                        #define INTERSECT
+                        #ifdef INTERSECT
+                            voxelIntersectsTriangle(minVoxel, maxVoxel, triangle)
+                        #endif
+                        // #define DISTANCE
+                        #ifdef DISTANCE
+                            distanceCheck(minVoxel, maxVoxel, triangle)
                         #endif
                     )
                     {
