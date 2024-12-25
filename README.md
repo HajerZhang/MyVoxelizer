@@ -19,10 +19,12 @@ Then, you can run the program with the following command:
 
 ## Results
 
-The model before voxelization(.stl):
-![image](./doc/stl.png)
-The model after voxelization(.vtk):
-![image](./doc/256.png)
+<div style="display: flex; justify-content: space-between;">
+    <img src="./doc/stl.png" alt="Image 1" style="width: 48%;">
+    <img src="./doc/512.png" alt="Image 2" style="width: 48%;">
+</div>
+<p style="text-align: center;">Figure 1: The original model (left) and the voxelized model (right) of sofa model.</p>
+
 
 ## Authors
 * Hajer Zhang, IDEAS, DLUT, China
@@ -31,4 +33,12 @@ The model after voxelization(.vtk):
 
 ## Update
 * 2024.12.23：Add a [Viewer](./Viewer.py) based on the VTK, pyvista, pyvistaqt, and PyQt5. But the viewer is not stable now.
+* 2024.12.25：Update the new algorithm for voxelization, and the new algorithm is more efficient than the previous one.
+<div style="display: flex; justify-content: space-between;">
+    <img src="./doc/before.png" alt="Image 1" style="width: 48%;">
+    <img src="./doc/after.png" alt="Image 2" style="width: 48%;">
+</div>
+
+<p style="text-align: center;">Figure 2: Comparison of the algorithm before (left) and after (right) of bunny model.</p>
+
 

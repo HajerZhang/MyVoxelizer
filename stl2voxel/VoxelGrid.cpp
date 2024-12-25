@@ -291,11 +291,11 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
 
 
                     if(
-                        // #define AABB
+                        #define AABB
                         #ifdef AABB
                             aabbCheck(minTri, maxTri, minVoxel, maxVoxel)
                         #endif
-                        #define INTERSECT
+                        // #define INTERSECT
                         #ifdef INTERSECT
                             voxelIntersectsTriangle(minVoxel, maxVoxel, triangle)
                         #endif
