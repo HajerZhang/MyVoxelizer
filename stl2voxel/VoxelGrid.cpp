@@ -291,11 +291,11 @@ void VoxelGrid::ComfirmSurfaceVoxels(const STLMesh *stlmesh)
 
 
                     if(
-                        #define AABB
+                        // #define AABB
                         #ifdef AABB
                             aabbCheck(minTri, maxTri, minVoxel, maxVoxel)
                         #endif
-                        // #define INTERSECT
+                        #define INTERSECT
                         #ifdef INTERSECT
                             voxelIntersectsTriangle(minVoxel, maxVoxel, triangle)
                         #endif
@@ -335,7 +335,6 @@ void VoxelGrid::ComfirmInsideVoxels()
                 for(int i = x + 1; i < m_numX; i++){
                     if(m_grid[z * m_numX * m_numY + y * m_numX + i] == 0){
                         surfaceCount++;
-                        break;
                     }
                 }
                 // x negative direction
