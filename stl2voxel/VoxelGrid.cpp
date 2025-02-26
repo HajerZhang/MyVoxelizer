@@ -752,6 +752,8 @@ void VoxelGrid::OutputXMLFile(const std::string &outputfile) {
         if(m_grid[i] == 1) insideIndex.push_back(i);
     }
     auto *gridData = doc.NewElement("GridData");
+    gridData->SetAttribute("type", "Local");
+    gridData->SetAttribute("num", sufaceIndex.size() + insideIndex.size());
     auto *surface = doc.NewElement("SurfaceVoxels");
     surface->SetAttribute("num", sufaceIndex.size());
     {
@@ -827,5 +829,6 @@ void VoxelGrid::OutputXMLFile(const std::string &outputfile) {
     } else {
         std::cout << "XML file saved to " << outputfile << std::endl;
     }
+
 }
 
